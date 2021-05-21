@@ -1,0 +1,14 @@
+# NOTE: Requires **VS2019 16.3** or later
+
+# New Rule Set
+# Description:  
+
+# Code files
+[*.{cs,vb}]
+
+
+# SA1633: File should have header
+dotnet_diagnostic.SA1633.severity = none
+
+# SA1600: Elements should be documented
+dotnet_diagnostic.SA1600.severity = none
