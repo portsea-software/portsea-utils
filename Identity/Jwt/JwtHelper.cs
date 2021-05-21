@@ -5,7 +5,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Topaz.Identity.Helper
+namespace Portsea.Utils.Identity.Jwt
 {
     public class JwtHelper
     {
