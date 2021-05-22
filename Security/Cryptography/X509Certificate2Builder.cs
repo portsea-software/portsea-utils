@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Security.Cryptography.X509Certificates;
 
-namespace Portsea.Utilities.Security.Cryptography
+namespace Portsea.Utils.Security.Cryptography
 {
     public static class X509Certificate2Builder
     {

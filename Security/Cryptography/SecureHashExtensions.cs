@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Portsea.Utilities.Security.Cryptography
+namespace Portsea.Utils.Security.Cryptography
 {
     public static class SecureHashExtensions
     {
