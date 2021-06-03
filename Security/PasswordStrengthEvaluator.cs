@@ -1,10 +1,10 @@
 ﻿namespace Portsea.Utils.Security
 {
-    public class PasswordEvaluator
+    public class PasswordStrengthEvaluator
     {
         private readonly int passwordLength;
 
-        private readonly PasswordRules passwordRules;
+        private readonly PasswordStrengthRules passwordRules;
 
         private int digitCount;
 
@@ -14,7 +14,7 @@
 
         private int specialCharacterCount;
 
-        public PasswordEvaluator(string password, PasswordRules passwordRules)
+        public PasswordStrengthEvaluator(string password, PasswordStrengthRules passwordRules)
         {
             this.passwordRules = passwordRules;
             password = password.Trim();

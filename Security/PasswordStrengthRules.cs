@@ -1,6 +1,6 @@
 ﻿namespace Portsea.Utils.Security
 {
-    public class PasswordRules
+    public class PasswordStrengthRules
     {
         public int MinimumLength { get; set; }
 
