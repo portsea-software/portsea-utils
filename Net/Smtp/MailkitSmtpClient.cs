@@ -40,7 +40,7 @@ namespace Portsea.Utils.Net.Smtp
             using (var client = new MailKit.Net.Smtp.SmtpClient())
             {
                 // connect to SMTP
-                await client.ConnectAsync(this.smtpHost, this.smtpPort);
+                await client.ConnectAsync(this.smtpHost, this.smtpPort, this.sslOptions);
 
                 // login
                 string login = string.IsNullOrWhiteSpace(this.username) ? message.GetFromEmailAddress() : this.username;

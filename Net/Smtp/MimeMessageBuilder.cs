@@ -13,10 +13,9 @@ namespace Portsea.Utils.Net.Smtp
     {
         private static readonly Regex Base64EncodedImages = new Regex("(?:data:image)/(?<subMediaType>png|jpeg|gif)(?:;base64,)(?<base64>.*)");
 
-        public static MimeMessage Build(
+        public static MimeMessage BuildHtmlMessage(
             string subject,
             string body,
-            bool isHtml,
             string email,
             string displayName,
             IEnumerable<string> to,
@@ -31,48 +30,97 @@ namespace Portsea.Utils.Net.Smtp
 
             message.AddFromAddress(new MailboxAddress(displayName, email));
             message.AddRecipients(to, cc, bcc);
-            message.Body = GetMessageBody(body, isHtml, attachments);
+            message.Body = GetMessageBody(body, string.Empty, attachments);
 
             return message;
         }
 
-        private static MimeEntity GetMessageBody(string body, bool isHtml, IEnumerable<string> attachments)
+        public static MimeMessage BuildTextMessage(
+            string subject,
+            string body,
+            string email,
+            string displayName,
+            IEnumerable<string> to,
+            IEnumerable<string> cc,
+            IEnumerable<string> bcc,
+            IEnumerable<string> attachments)
+        {
+            MimeMessage message = new MimeMessage()
+            {
+                Subject = subject,
+            };
+
+            message.AddFromAddress(new MailboxAddress(displayName, email));
+            message.AddRecipients(to, cc, bcc);
+            message.Body = GetMessageBody(string.Empty, body, attachments);
+
+            return message;
+        }
+
+        public static MimeMessage BuildMultipartMessage(
+            string subject,
+            string htmlBody,
+            string textBody,
+            string email,
+            string displayName,
+            IEnumerable<string> to,
+            IEnumerable<string> cc,
+            IEnumerable<string> bcc,
+            IEnumerable<string> attachments)
+        {
+            MimeMessage message = new MimeMessage()
+            {
+                Subject = subject,
+            };
+
+            message.AddFromAddress(new MailboxAddress(displayName, email));
+            message.AddRecipients(to, cc, bcc);
+            message.Body = GetMessageBody(htmlBody, textBody, attachments);
+
+            return message;
+        }
+
+        private static MimeEntity GetMessageBody(string htmlBody, string textBody, IEnumerable<string> attachments)
         {
             BodyBuilder bodyBuilder = new BodyBuilder();
-            if (isHtml)
-            {
-                GetHtmlBody(bodyBuilder, body);
-            }
-            else
-            {
-                bodyBuilder.TextBody = body;
-            }
-
+            ProcessHtmlBody(bodyBuilder, htmlBody);
+            ProcessTextBody(bodyBuilder, textBody);
             AddAttachments(bodyBuilder, attachments);
 
             return bodyBuilder.ToMessageBody();
         }
 
-        private static void GetHtmlBody(BodyBuilder bodyBuilder, string body)
+        private static void ProcessHtmlBody(this BodyBuilder bodyBuilder, string body)
         {
-            HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-            try
+            if (!string.IsNullOrWhiteSpace(body))
             {
-                doc.LoadHtml(body);
-
-                IDictionary<string, MimeEntity> imageSources = GetImageSources(doc);
-                if (imageSources.Any())
+                HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+                try
                 {
-                    AddLinkedResources(bodyBuilder, imageSources.Values);
-                    EmbedImages(doc, imageSources);
-                }
+                    doc.LoadHtml(body);
 
-                body = doc.DocumentNode.OuterHtml;
+                    IDictionary<string, MimeEntity> imageSources = GetImageSources(doc);
+                    if (imageSources.Any())
+                    {
+                        AddLinkedResources(bodyBuilder, imageSources.Values);
+                        EmbedImages(doc, imageSources);
+                    }
+
+                    body = doc.DocumentNode.OuterHtml;
+                }
+                finally
+                {
+                    // worst case scenario send the body without processing images
+                    bodyBuilder.HtmlBody = body;
+                }
             }
-            finally
+        }
+
+        private static void ProcessTextBody(BodyBuilder bodyBuilder, string body)
+        {
+            if (!string.IsNullOrWhiteSpace(body))
             {
-                // worst case scenario send the body without processing images
-                bodyBuilder.HtmlBody = body;
+                bodyBuilder.TextBody = body;
             }
         }
 
@@ -113,7 +161,7 @@ namespace Portsea.Utils.Net.Smtp
             return doc.DocumentNode.OuterHtml;
         }
 
-        private static IDictionary<string, MimeEntity> GetImagesSources(HtmlAgilityPack.HtmlDocument doc)
+        private static IDictionary<string, MimeEntity> GetImageSources(HtmlAgilityPack.HtmlDocument doc)
         {
             Dictionary<string, MimeEntity> source2MimeParts = new Dictionary<string, MimeEntity>();
             foreach (HtmlAgilityPack.HtmlNode imageElement in doc.DocumentNode.SelectNodes("//img"))
