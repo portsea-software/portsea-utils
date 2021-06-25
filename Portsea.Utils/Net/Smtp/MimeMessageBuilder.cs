@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -7,75 +8,30 @@ using System.Text.RegularExpressions;
 using MimeKit;
 using MimeKit.Utils;
 
+using Portsea.Utils.Validation;
+
 namespace Portsea.Utils.Net.Smtp
 {
     public static class MimeMessageBuilder
     {
         private static readonly Regex Base64EncodedImages = new Regex("(?:data:image)/(?<subMediaType>png|jpeg|gif)(?:;base64,)(?<base64>.*)");
+        private static readonly DataAnnotationsValidator DataAnnotationsValidator = new DataAnnotationsValidator();
 
-        public static MimeMessage BuildHtmlMessage(
-            string subject,
-            string body,
-            string email,
-            string displayName,
-            IEnumerable<string> to,
-            IEnumerable<string> cc,
-            IEnumerable<string> bcc,
-            IEnumerable<string> attachments)
+        public static MimeMessage BuildHtmlMessage(BuildMessageRequest request)
         {
+            if (!DataAnnotationsValidator.TryValidate(request, out ICollection<ValidationResult> results))
+            {
+                throw new ValidationResultsException(results);
+            }
+
             MimeMessage message = new MimeMessage()
             {
-                Subject = subject,
+                Subject = request.Subject,
             };
 
-            message.AddFromAddress(new MailboxAddress(displayName, email));
-            message.AddRecipients(to, cc, bcc);
-            message.Body = GetMessageBody(body, string.Empty, attachments);
-
-            return message;
-        }
-
-        public static MimeMessage BuildTextMessage(
-            string subject,
-            string body,
-            string email,
-            string displayName,
-            IEnumerable<string> to,
-            IEnumerable<string> cc,
-            IEnumerable<string> bcc,
-            IEnumerable<string> attachments)
-        {
-            MimeMessage message = new MimeMessage()
-            {
-                Subject = subject,
-            };
-
-            message.AddFromAddress(new MailboxAddress(displayName, email));
-            message.AddRecipients(to, cc, bcc);
-            message.Body = GetMessageBody(string.Empty, body, attachments);
-
-            return message;
-        }
-
-        public static MimeMessage BuildMultipartMessage(
-            string subject,
-            string htmlBody,
-            string textBody,
-            string email,
-            string displayName,
-            IEnumerable<string> to,
-            IEnumerable<string> cc,
-            IEnumerable<string> bcc,
-            IEnumerable<string> attachments)
-        {
-            MimeMessage message = new MimeMessage()
-            {
-                Subject = subject,
-            };
-
-            message.AddFromAddress(new MailboxAddress(displayName, email));
-            message.AddRecipients(to, cc, bcc);
-            message.Body = GetMessageBody(htmlBody, textBody, attachments);
+            message.AddFromAddress(new MailboxAddress(request.DisplayName, request.Email));
+            message.AddRecipients(request.To, request.Cc, request.Bcc);
+            message.Body = GetMessageBody(request.HtmlBody, request.TextBody, request.Attachments);
 
             return message;
         }
@@ -164,19 +120,24 @@ namespace Portsea.Utils.Net.Smtp
         private static IDictionary<string, MimeEntity> GetImageSources(HtmlAgilityPack.HtmlDocument doc)
         {
             Dictionary<string, MimeEntity> source2MimeParts = new Dictionary<string, MimeEntity>();
-            foreach (HtmlAgilityPack.HtmlNode imageElement in doc.DocumentNode.SelectNodes("//img"))
+
+            HtmlAgilityPack.HtmlNodeCollection imgNodes = doc.DocumentNode.SelectNodes("//img");
+            if (imgNodes != null)
             {
-                HtmlAgilityPack.HtmlAttribute srcAttribute = imageElement.Attributes["src"];
-                if (srcAttribute != null)
+                foreach (HtmlAgilityPack.HtmlNode imgNode in imgNodes)
                 {
-                    Uri source = new Uri(srcAttribute.Value);
-                    if (source.IsFile)
+                    HtmlAgilityPack.HtmlAttribute srcAttribute = imgNode.Attributes["src"];
+                    if (srcAttribute != null)
                     {
-                        source2MimeParts.Add(srcAttribute.Value, CreateImagePartFromFile(srcAttribute.Value));
-                    }
-                    else if (Base64EncodedImages.IsMatch(srcAttribute.Value))
-                    {
-                        source2MimeParts.Add(srcAttribute.Value, CreateImagePartFromBase64(srcAttribute.Value));
+                        Uri source = new Uri(srcAttribute.Value);
+                        if (source.IsFile)
+                        {
+                            source2MimeParts.Add(srcAttribute.Value, CreateImagePartFromFile(srcAttribute.Value));
+                        }
+                        else if (Base64EncodedImages.IsMatch(srcAttribute.Value))
+                        {
+                            source2MimeParts.Add(srcAttribute.Value, CreateImagePartFromBase64(srcAttribute.Value));
+                        }
                     }
                 }
             }
