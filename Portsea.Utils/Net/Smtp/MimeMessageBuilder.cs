@@ -17,7 +17,7 @@ namespace Portsea.Utils.Net.Smtp
         private static readonly Regex Base64EncodedImages = new Regex("(?:data:image)/(?<subMediaType>png|jpeg|gif)(?:;base64,)(?<base64>.*)");
         private static readonly DataAnnotationsValidator DataAnnotationsValidator = new DataAnnotationsValidator();
 
-        public static MimeMessage BuildHtmlMessage(BuildMessageRequest request)
+        public static MimeMessage BuildMessage(BuildMessageRequest request)
         {
             if (!DataAnnotationsValidator.TryValidate(request, out ICollection<ValidationResult> results))
             {

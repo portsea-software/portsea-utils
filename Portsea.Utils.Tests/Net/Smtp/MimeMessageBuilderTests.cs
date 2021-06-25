@@ -21,7 +21,7 @@ namespace Portsea.Utils.Tests
             };
 
             // Act
-            MimeMessage message = MimeMessageBuilder.BuildHtmlMessage(request);
+            MimeMessage message = MimeMessageBuilder.BuildMessage(request);
 
             // Assert
             Assert.AreEqual(1, message.From.Count);
@@ -42,7 +42,7 @@ namespace Portsea.Utils.Tests
             };
 
             // Act
-            MimeMessage message = MimeMessageBuilder.BuildHtmlMessage(request);
+            MimeMessage message = MimeMessageBuilder.BuildMessage(request);
 
             // Assert
             Assert.AreEqual(1, message.From.Count);
@@ -63,7 +63,7 @@ namespace Portsea.Utils.Tests
             };
 
             // Act
-            MimeMessage message = MimeMessageBuilder.BuildHtmlMessage(request);
+            MimeMessage message = MimeMessageBuilder.BuildMessage(request);
 
             // Assert
             Assert.AreEqual(1, message.From.Count);
@@ -82,7 +82,7 @@ namespace Portsea.Utils.Tests
             };
 
             // Act
-            MimeMessage message = MimeMessageBuilder.BuildHtmlMessage(request);
+            MimeMessage message = MimeMessageBuilder.BuildMessage(request);
 
             // Assert
             Assert.AreEqual(1, message.From.Count);
@@ -104,7 +104,7 @@ namespace Portsea.Utils.Tests
             };
 
             // Act
-            MimeMessage message = MimeMessageBuilder.BuildHtmlMessage(request);
+            MimeMessage message = MimeMessageBuilder.BuildMessage(request);
 
             // Assert
             Assert.AreEqual(1, message.Attachments.Count());
