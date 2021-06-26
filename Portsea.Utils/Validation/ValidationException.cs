@@ -4,17 +4,17 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Portsea.Utils.Validation
 {
-    public class ValidationResultsException : Exception
+    public class ValidationException : Exception
     {
         private const string DefaultErrorMessage = "Validation error.";
 
-        public ValidationResultsException(IEnumerable<ValidationResult> validationErrors)
+        public ValidationException(IEnumerable<ValidationResult> validationErrors)
         {
             this.ErrorMessage = DefaultErrorMessage;
             this.ValidationErrors = validationErrors;
         }
 
-        public ValidationResultsException(string errorMessage, IEnumerable<ValidationResult> validationErrors)
+        public ValidationException(string errorMessage, IEnumerable<ValidationResult> validationErrors)
         {
             this.ErrorMessage = errorMessage;
             this.ValidationErrors = validationErrors;

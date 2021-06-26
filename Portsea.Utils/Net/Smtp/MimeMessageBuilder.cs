@@ -15,13 +15,13 @@ namespace Portsea.Utils.Net.Smtp
     public static class MimeMessageBuilder
     {
         private static readonly Regex Base64EncodedImages = new Regex("(?:data:image)/(?<subMediaType>png|jpeg|gif)(?:;base64,)(?<base64>.*)");
-        private static readonly DataAnnotationsValidator DataAnnotationsValidator = new DataAnnotationsValidator();
+        private static readonly AnnotationsValidator DataAnnotationsValidator = new AnnotationsValidator();
 
         public static MimeMessage BuildMessage(BuildMessageRequest request)
         {
             if (!DataAnnotationsValidator.TryValidate(request, out ICollection<ValidationResult> results))
             {
-                throw new ValidationResultsException(results);
+                throw new Validation.ValidationException(results);
             }
 
             MimeMessage message = new MimeMessage()
