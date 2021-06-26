@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -15,14 +14,10 @@ namespace Portsea.Utils.Net.Smtp
     public static class MimeMessageBuilder
     {
         private static readonly Regex Base64EncodedImages = new Regex("(?:data:image)/(?<subMediaType>png|jpeg|gif)(?:;base64,)(?<base64>.*)");
-        private static readonly AnnotationsValidator DataAnnotationsValidator = new AnnotationsValidator();
 
         public static MimeMessage BuildMessage(BuildMessageRequest request)
         {
-            if (!DataAnnotationsValidator.TryValidate(request, out ICollection<ValidationResult> results))
-            {
-                throw new Validation.ValidationException(results);
-            }
+            request.Validate();
 
             MimeMessage message = new MimeMessage()
             {
