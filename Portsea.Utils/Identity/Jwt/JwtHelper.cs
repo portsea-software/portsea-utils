@@ -15,9 +15,9 @@ namespace Portsea.Utils.Identity.Jwt
             string audience,
             string issuerKey,
             TimeSpan expiration,
-            Claim[] additionalClaims = null)
+            IEnumerable<Claim> additionalClaims = null)
         {
-            var claims = new[]
+            List<Claim> claims = new List<Claim>()
             {
                 new Claim(JwtRegisteredClaimNames.Sub, username),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
@@ -25,9 +25,7 @@ namespace Portsea.Utils.Identity.Jwt
 
             if (additionalClaims is object)
             {
-                var claimList = new List<Claim>(claims);
-                claimList.AddRange(additionalClaims);
-                claims = claimList.ToArray();
+                claims.AddRange(additionalClaims);
             }
 
             var key = GetSymetricSecurityKey(issuerKey);
