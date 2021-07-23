@@ -6,9 +6,9 @@ namespace Portsea.Utils.Validation.Annotations
     {
         public override bool IsValid(object value)
         {
-            if (value != null && value is bool)
+            if (value != null && value is bool boolean)
             {
-                return !(bool)value;
+                return !boolean;
             }
 
             return false;
