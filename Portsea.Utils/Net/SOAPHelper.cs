@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace Portsea.Utils.Net
@@ -20,7 +21,7 @@ namespace Portsea.Utils.Net
         /// <param name="soapAction">The SOAPAction value, as specified in the Web Service's WSDL (or NULL to use the url parameter).</param>
         /// <param name="useSOAP12">Set this to TRUE to use the SOAP v1.2 protocol, FALSE to use the SOAP v1.1 (default).</param>
         /// <returns>A string containing the raw Web Service response.</returns>
-        public static string SendSOAPRequest(
+        public static async Task<string> SendSOAPRequest(
             string url,
             string action,
             HttpMethod httpMethod,
@@ -32,7 +33,7 @@ namespace Portsea.Utils.Net
             HttpWebRequest request = GetWebRequest(url, httpMethod, soapAction, useSOAP12, soapEnvelope);
 
             string result;
-            using (WebResponse response = request.GetResponse())
+            using (WebResponse response = await request.GetResponseAsync())
             {
                 using (StreamReader rd = new StreamReader(response.GetResponseStream()))
                 {
