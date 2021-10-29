@@ -31,10 +31,12 @@ namespace Portsea.Utils.Identity.Jwt
             var key = GetSymetricSecurityKey(issuerKey);
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
+            DateTime notBefore = DateTime.UtcNow;
             return new JwtSecurityToken(
                 issuer: issuer,
                 audience: audience,
-                expires: DateTime.UtcNow.Add(expiration),
+                notBefore: notBefore,
+                expires: notBefore.Add(expiration),
                 claims: claims,
                 signingCredentials: creds);
         }
