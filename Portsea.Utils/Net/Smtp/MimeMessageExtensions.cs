@@ -30,6 +30,19 @@ namespace Portsea.Utils.Net.Smtp
             }
         }
 
+        internal static void AddReplyToAddress(this MimeMessage message, MailboxAddress address)
+        {
+            message.ReplyTo.Add(address);
+        }
+
+        internal static void AddReplyToAddresses(this MimeMessage message, IEnumerable<string> addresses)
+        {
+            foreach (string address in addresses)
+            {
+                message.ReplyTo.Add(address.ToMailboxAddress());
+            }
+        }
+
         internal static void AddToAddress(this MimeMessage message, MailboxAddress address)
         {
             message.To.Add(address);
@@ -74,6 +87,12 @@ namespace Portsea.Utils.Net.Smtp
             message.AddToAddresses(to);
             message.AddCcAddresses(cc);
             message.AddBccAddresses(bcc);
+        }
+
+        internal static void AddRecipients(this MimeMessage message, IEnumerable<string> to, IEnumerable<string> cc, IEnumerable<string> bcc, IEnumerable<string> replyTo)
+        {
+            message.AddRecipients(to, cc, bcc);
+            message.AddReplyToAddresses(replyTo);
         }
 
         internal static MailboxAddress ToMailboxAddress(this string address)

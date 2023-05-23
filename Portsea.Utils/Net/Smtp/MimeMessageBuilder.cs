@@ -25,7 +25,7 @@ namespace Portsea.Utils.Net.Smtp
             };
 
             message.AddFromAddress(new MailboxAddress(request.DisplayName, request.Email));
-            message.AddRecipients(request.To, request.Cc, request.Bcc);
+            message.AddRecipients(request.To, request.Cc, request.Bcc, request.ReplyTo);
             message.Body = GetMessageBody(request.HtmlBody, request.TextBody, request.Attachments);
 
             return message;

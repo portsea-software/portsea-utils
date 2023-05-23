@@ -21,6 +21,8 @@ namespace Portsea.Utils.Net.Smtp
 
         public string TextBody { get; set; } = string.Empty;
 
+        public IEnumerable<string> ReplyTo { get; set; } = Array.Empty<string>();
+
         public IEnumerable<string> To { get; set; } = Array.Empty<string>();
 
         public IEnumerable<string> Cc { get; set; } = Array.Empty<string>();

@@ -5,7 +5,7 @@ using NUnit.Framework;
 using MimeKit;
 using Portsea.Utils.Net.Smtp;
 
-namespace Portsea.Utils.Tests
+namespace Portsea.Utils.Tests.Net.Smtp
 {
     public class Tests
     {
@@ -108,6 +108,25 @@ namespace Portsea.Utils.Tests
 
             // Assert
             Assert.AreEqual(1, message.Attachments.Count());
+        }
+
+        [Test]
+        public void Build_Valid_Mime_Message_With_Explicit_ReplyTo_Address()
+        {
+            // Arrange
+            BuildMessageRequest request = new BuildMessageRequest()
+            {
+                Email = "from@example.com",
+                To = new string[] { "to@example.com" },
+                ReplyTo = new string[] { "user1@example.com", "user2@example.com" },
+                HtmlBody = "<html><body><h1>Hello!</h1></body></html>"
+            };
+
+            // Act
+            MimeMessage message = MimeMessageBuilder.BuildMessage(request);
+
+            // Assert
+            Assert.AreEqual(2, message.ReplyTo.Count);
         }
     }
 }
