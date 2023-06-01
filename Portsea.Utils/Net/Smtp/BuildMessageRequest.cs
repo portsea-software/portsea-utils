@@ -12,7 +12,7 @@ namespace Portsea.Utils.Net.Smtp
         public string Subject { get; set; } = string.Empty;
 
         [Required]
-        [EmailAddress]
+        [Validation.Annotations.EmailAddress]
         public string Email { get; set; }
 
         public string DisplayName { get; set; } = string.Empty;
