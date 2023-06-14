@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 
 namespace Portsea.Utils
 {
@@ -9,6 +10,12 @@ namespace Portsea.Utils
         {
             TypeConverter typeConverter = TypeDescriptor.GetConverter(typeof(T));
             return (T)typeConverter.ConvertFrom(value);
+        }
+
+        public static object Convert(Type type, string value)
+        {
+            TypeConverter typeConverter = TypeDescriptor.GetConverter(type);
+            return typeConverter.ConvertFrom(value);
         }
     }
 }
