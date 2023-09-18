@@ -127,7 +127,10 @@ namespace Portsea.Utils.Net.Smtp
                         Uri source = new Uri(srcAttribute.Value);
                         if (source.IsFile)
                         {
-                            source2MimeParts.Add(srcAttribute.Value, CreateImagePartFromFile(srcAttribute.Value));
+                            if (File.Exists(source.LocalPath))
+                            {
+                                source2MimeParts.Add(srcAttribute.Value, CreateImagePartFromFile(source.LocalPath));
+                            }
                         }
                         else if (Base64EncodedImages.IsMatch(srcAttribute.Value))
                         {
