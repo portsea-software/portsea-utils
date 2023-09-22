@@ -25,6 +25,8 @@ jobs:
       with:
         dotnet-version: 6.0.x
         source-url: https://api.nuget.org/v3/index.json
+      env:
+        NUGET_AUTH_TOKEN: ${{secrets.NUGET_APIKEY}}
     - name: Install dependencies
       run: dotnet restore ./Portsea.Utils.sln
     - name: Build
@@ -40,4 +42,6 @@ jobs:
     # Use --skip-duplicate to prevent errors if a package with the same version already exists.
     # If you retry a failed workflow, already published packages will be skipped without error.
     - name: Publish NuGet package
-      run: dotnet nuget push **/*.nupkg -k ${{ secrets.NUGET_APIKEY }} --skip-duplicate --no-symbols true
+      env:
+        NUGET_AUTH_TOKEN: ${{secrets.NUGET_APIKEY}}
+      run: dotnet nuget push **/*.nupkg -k $NUGET_AUTH_TOKEN --skip-duplicate --no-symbols true
