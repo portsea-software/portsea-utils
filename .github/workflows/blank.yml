@@ -23,10 +23,23 @@ jobs:
       run: dotnet build ./Portsea.Utils.sln --configuration Release --no-restore
     - name: Test
       run: dotnet test --no-restore --verbosity normal
-    - name: Publish Portsea.Utils to NuGet
-      uses: brandedoutcast/publish-nuget@v2.5.5
-      with:
+    
+    # Create the NuGet package in the folder from the environment variable NuGetDirectory
+    - name: Create NuGet package
+    - run: dotnet pack --configuration Release --output ${{ env.NuGetDirectory }}
+    
+    # Publish all NuGet packages to NuGet.org
+    # Use --skip-duplicate to prevent errors if a package with the same version already exists.
+    # If you retry a failed workflow, already published packages will be skipped without error.
+    - name: Publish NuGet package
+      run: |
+        foreach($file in (Get-ChildItem "${{ env.NuGetDirectory }}" -Recurse -Include *.nupkg)) {
+            dotnet nuget push $file --api-key "${{ secrets.NUGET_APIKEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
+        }
+    #- name: Publish Portsea.Utils to NuGet
+    #  uses: brandedoutcast/publish-nuget@v2.5.5
+    #  with:
         # Filepath of the project to be packaged, relative to root of repository
-        PROJECT_FILE_PATH: ./Portsea.Utils/Portsea.Utils.csproj
+    #    PROJECT_FILE_PATH: ./Portsea.Utils/Portsea.Utils.csproj
         # API key to authenticate with NuGet server
-        NUGET_KEY: ${{ secrets.NUGET_API_KEY }}
+    #    NUGET_KEY: ${{ secrets.NUGET_API_KEY }}
