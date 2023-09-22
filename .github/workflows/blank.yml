@@ -36,10 +36,3 @@ jobs:
         foreach($file in (Get-ChildItem "${{ env.NuGetDirectory }}" -Recurse -Include *.nupkg)) {
             dotnet nuget push $file --api-key "${{ secrets.NUGET_APIKEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
         }
-    #- name: Publish Portsea.Utils to NuGet
-    #  uses: brandedoutcast/publish-nuget@v2.5.5
-    #  with:
-        # Filepath of the project to be packaged, relative to root of repository
-    #    PROJECT_FILE_PATH: ./Portsea.Utils/Portsea.Utils.csproj
-        # API key to authenticate with NuGet server
-    #    NUGET_KEY: ${{ secrets.NUGET_API_KEY }}
