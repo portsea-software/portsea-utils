@@ -39,4 +39,4 @@ jobs:
     # Use --skip-duplicate to prevent errors if a package with the same version already exists.
     # If you retry a failed workflow, already published packages will be skipped without error.
     - name: Publish NuGet package
-      run: dotnet nuget push ${{ env.NuGetDirectory }}/*.nupkg -s https://api.nuget.org/v3/index.json -k ${{secrets.NUGET_API_KEY}} --skip-duplicate --no-symbols true
+      run: dotnet nuget push ${{ env.NuGetDirectory }}/*.nupkg -s https://api.nuget.org/v3/index.json -k ${{secrets.NUGET_API_KEY}} --skip-duplicate --no-symbols
