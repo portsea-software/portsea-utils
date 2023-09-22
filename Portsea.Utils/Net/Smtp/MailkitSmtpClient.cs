@@ -51,5 +51,22 @@ namespace Portsea.Utils.Net.Smtp
 
             return message;
         }
+
+        public MimeMessage SendEmailSync(MimeMessage message)
+        {
+            using (var client = new MailKit.Net.Smtp.SmtpClient())
+            {
+                client.Connect(this.smtpHost, this.smtpPort, this.sslOptions);
+
+                string login = string.IsNullOrWhiteSpace(this.username) ? message.GetFromEmailAddress() : this.username;
+                client.Authenticate(login, this.password);
+
+                client.Send(message);
+
+                client.Disconnect(true);
+            }
+
+            return message;
+        }
     }
 }

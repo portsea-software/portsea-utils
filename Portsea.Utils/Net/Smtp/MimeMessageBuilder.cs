@@ -15,6 +15,8 @@ namespace Portsea.Utils.Net.Smtp
     {
         private static readonly Regex Base64EncodedImages = new Regex("(?:data:image)/(?<subMediaType>png|jpeg|gif)(?:;base64,)(?<base64>.*)");
 
+        private static readonly IImageDownloader ImageDownloader = new ImageDownloader();
+
         public static MimeMessage BuildMessage(BuildMessageRequest request)
         {
             request.Validate();
@@ -125,16 +127,26 @@ namespace Portsea.Utils.Net.Smtp
                     if (srcAttribute != null)
                     {
                         Uri source = new Uri(srcAttribute.Value);
+                        MimeEntity entity = null;
                         if (source.IsFile)
                         {
                             if (File.Exists(source.LocalPath))
                             {
-                                source2MimeParts.Add(srcAttribute.Value, CreateImagePartFromFile(source.LocalPath));
+                                entity = CreateImagePartFromFile(source.LocalPath);
                             }
+                        }
+                        else if (source.Scheme == Uri.UriSchemeHttp || source.Scheme == Uri.UriSchemeHttps)
+                        {
+                            entity = CreateImagePartFromWeb(source);
                         }
                         else if (Base64EncodedImages.IsMatch(srcAttribute.Value))
                         {
-                            source2MimeParts.Add(srcAttribute.Value, CreateImagePartFromBase64(srcAttribute.Value));
+                            entity = CreateImagePartFromBase64(srcAttribute.Value);
+                        }
+
+                        if (entity != null)
+                        {
+                            source2MimeParts.Add(srcAttribute.Value, entity);
                         }
                     }
                 }
@@ -145,27 +157,62 @@ namespace Portsea.Utils.Net.Smtp
 
         private static MimeEntity CreateImagePartFromFile(string source)
         {
-            ContentType contentType = new ContentType("image", GetExtensionWithoutPeriod(source));
-            Stream stream = File.OpenRead(source);
-            MimeEntity mimePart = MimeEntity.Load(contentType, stream);
-            mimePart.ContentDisposition = new ContentDisposition(ContentDisposition.Inline);
-            mimePart.ContentId = MimeUtils.GenerateMessageId();
+            try
+            {
+                ContentType contentType = new ContentType("image", GetExtensionWithoutPeriod(source));
+                Stream stream = File.OpenRead(source);
+                MimeEntity mimePart = MimeEntity.Load(contentType, stream);
+                mimePart.ContentDisposition = new ContentDisposition(ContentDisposition.Inline);
+                mimePart.ContentId = MimeUtils.GenerateMessageId();
 
-            return mimePart;
+                return mimePart;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private static MimeEntity CreateImagePartFromWeb(Uri source)
+        {
+            try
+            {
+                ContentType contentType = new ContentType("image", GetExtensionWithoutPeriod(source.AbsolutePath));
+
+                byte[] imageData = ImageDownloader.DownloadImageBytes(source);
+
+                MemoryStream stream = new MemoryStream(imageData);
+                MimeEntity mimePart = MimeEntity.Load(contentType, stream);
+                mimePart.ContentDisposition = new ContentDisposition(ContentDisposition.Inline);
+                mimePart.ContentId = MimeUtils.GenerateMessageId();
+
+                return mimePart;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         private static MimeEntity CreateImagePartFromBase64(string source)
         {
-            Match m = Base64EncodedImages.Matches(source)[0];
-            MemoryStream stream = new MemoryStream(Convert.FromBase64String(m.Groups["base64"].Value));
-            string subMediaType = m.Groups["subMediaType"].Value;
+            try
+            {
+                Match m = Base64EncodedImages.Matches(source)[0];
+                MemoryStream stream = new MemoryStream(Convert.FromBase64String(m.Groups["base64"].Value));
+                string subMediaType = m.Groups["subMediaType"].Value;
 
-            ContentType contentType = new ContentType("image", subMediaType);
-            MimeEntity mimePart = MimeEntity.Load(contentType, stream);
-            mimePart.ContentDisposition = new ContentDisposition(ContentDisposition.Inline);
-            mimePart.ContentId = MimeUtils.GenerateMessageId();
+                ContentType contentType = new ContentType("image", subMediaType);
+                MimeEntity mimePart = MimeEntity.Load(contentType, stream);
+                mimePart.ContentDisposition = new ContentDisposition(ContentDisposition.Inline);
+                mimePart.ContentId = MimeUtils.GenerateMessageId();
 
-            return mimePart;
+                return mimePart;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         private static string GetExtensionWithoutPeriod(string filename)
