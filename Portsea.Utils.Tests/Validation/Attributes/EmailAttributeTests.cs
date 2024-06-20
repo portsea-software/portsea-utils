@@ -19,7 +19,7 @@ namespace Portsea.Utils.Tests.Validation.Attributes
             EmailAddressAttribute attribute = new EmailAddressAttribute();
             attribute.AllowEmptyStrings = allowEmptyStrings;
 
-            Assert.AreEqual(isValid, attribute.IsValid(emailAddress));
+            Assert.That(attribute.IsValid(emailAddress), Is.EqualTo(isValid));
         }
     }
 }

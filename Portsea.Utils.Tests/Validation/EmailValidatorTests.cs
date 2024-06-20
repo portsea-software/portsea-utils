@@ -15,7 +15,7 @@ namespace Portsea.Utils.Tests.Validation
             bool result = EmailValidator.IsValid(emailAddress);
 
             // Assert
-            Assert.AreEqual(expectedResult, result);
+            Assert.That(result, Is.EqualTo(expectedResult));
         }
 
     }

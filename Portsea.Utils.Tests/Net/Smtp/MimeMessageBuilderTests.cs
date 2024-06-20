@@ -26,10 +26,10 @@ namespace Portsea.Utils.Tests.Net.Smtp
             MimeMessage message = MimeMessageBuilder.BuildMessage(request);
 
             // Assert
-            Assert.AreEqual(1, message.From.Count);
-            Assert.AreEqual(1, message.To.Count);
-            Assert.IsFalse(string.IsNullOrWhiteSpace(message.HtmlBody));
-            Assert.IsTrue(string.IsNullOrWhiteSpace(message.TextBody));
+            Assert.That(message.From.Count, Is.EqualTo(1));
+            Assert.That(message.To.Count, Is.EqualTo(1));
+            Assert.That(string.IsNullOrWhiteSpace(message.HtmlBody), Is.False);
+            Assert.That(string.IsNullOrWhiteSpace(message.TextBody), Is.True);
         }
 
         [Test]
@@ -47,10 +47,10 @@ namespace Portsea.Utils.Tests.Net.Smtp
             MimeMessage message = MimeMessageBuilder.BuildMessage(request);
 
             // Assert
-            Assert.AreEqual(1, message.From.Count);
-            Assert.AreEqual(1, message.To.Count);
-            Assert.IsTrue(string.IsNullOrWhiteSpace(message.HtmlBody));
-            Assert.IsFalse(string.IsNullOrWhiteSpace(message.TextBody));
+            Assert.That(message.From.Count, Is.EqualTo(1));
+            Assert.That(message.To.Count, Is.EqualTo(1));
+            Assert.That(string.IsNullOrWhiteSpace(message.HtmlBody), Is.True);
+            Assert.That(string.IsNullOrWhiteSpace(message.TextBody), Is.False);
         }
 
         [Test]
@@ -68,8 +68,8 @@ namespace Portsea.Utils.Tests.Net.Smtp
             MimeMessage message = MimeMessageBuilder.BuildMessage(request);
 
             // Assert
-            Assert.AreEqual(1, message.From.Count);
-            Assert.AreEqual(1, message.Cc.Count);
+            Assert.That(message.From.Count, Is.EqualTo(1));
+            Assert.That(message.Cc.Count, Is.EqualTo(1));
         }
 
         [Test]
@@ -87,8 +87,8 @@ namespace Portsea.Utils.Tests.Net.Smtp
             MimeMessage message = MimeMessageBuilder.BuildMessage(request);
 
             // Assert
-            Assert.AreEqual(1, message.From.Count);
-            Assert.AreEqual(1, message.Bcc.Count);
+            Assert.That(message.From.Count, Is.EqualTo(1));
+            Assert.That(message.Bcc.Count, Is.EqualTo(1));
         }
 
         [Test]
@@ -109,7 +109,7 @@ namespace Portsea.Utils.Tests.Net.Smtp
             MimeMessage message = MimeMessageBuilder.BuildMessage(request);
 
             // Assert
-            Assert.AreEqual(1, message.Attachments.Count());
+            Assert.That(message.Attachments.Count(), Is.EqualTo(1));
         }
 
         [Test]
@@ -128,7 +128,7 @@ namespace Portsea.Utils.Tests.Net.Smtp
             MimeMessage message = MimeMessageBuilder.BuildMessage(request);
 
             // Assert
-            Assert.AreEqual(2, message.ReplyTo.Count);
+            Assert.That(message.ReplyTo.Count, Is.EqualTo(2));
         }
 
         [Test]
@@ -153,7 +153,7 @@ namespace Portsea.Utils.Tests.Net.Smtp
             string imgSrc = htmlDoc.DocumentNode.SelectSingleNode("//img[1]").GetAttributeValue("src", string.Empty);
 
             // Assert
-            Assert.IsTrue(imgSrc.StartsWith("cid:"));
+            Assert.That(imgSrc.StartsWith("cid:"), Is.True);
         }
 
         [Test]
@@ -179,7 +179,7 @@ namespace Portsea.Utils.Tests.Net.Smtp
             string imgSrc = htmlDoc.DocumentNode.SelectSingleNode("//img[1]").GetAttributeValue("src", string.Empty);
 
             // Assert
-            Assert.IsTrue(imgSrc.StartsWith("cid:"));
+            Assert.That(imgSrc.StartsWith("cid:"), Is.True);
         }
 
         [Test]
@@ -204,7 +204,7 @@ namespace Portsea.Utils.Tests.Net.Smtp
             string imgSrc = htmlDoc.DocumentNode.SelectSingleNode("//img[1]").GetAttributeValue("src", string.Empty);
 
             // Assert - when the file path cannot be found the image source cannot be embedded so is left as is
-            Assert.AreEqual(logoPath, imgSrc);
+            Assert.That(imgSrc, Is.EqualTo(logoPath));
         }
     }
 }

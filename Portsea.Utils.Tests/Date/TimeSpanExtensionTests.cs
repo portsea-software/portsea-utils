@@ -31,7 +31,7 @@ namespace Portsea.Utils.Tests.Date
             int years = (second - first).Years();
 
             // Assert
-            Assert.AreEqual(expectedYears, years);
+            Assert.That(years, Is.EqualTo(expectedYears));
         }
     }
 }

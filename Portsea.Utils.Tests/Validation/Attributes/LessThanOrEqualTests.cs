@@ -20,7 +20,7 @@ namespace Portsea.Utils.Tests.Validation.Attributes
         public void Check_Greater_Values_Return_False(double pivotValue, object value)
         {
             // Assert
-            Assert.IsFalse(this.GetAttribute(pivotValue).IsValid(value));
+            Assert.That(this.GetAttribute(pivotValue).IsValid(value), Is.False);
         }
 
         [Test]
@@ -31,7 +31,7 @@ namespace Portsea.Utils.Tests.Validation.Attributes
             decimal value = 1.00M;
 
             // Assert
-            Assert.IsFalse(this.GetAttribute(pivotValue).IsValid(value));
+            Assert.That(this.GetAttribute(pivotValue).IsValid(value), Is.False);
         }
 
         [TestCase((double)0.00, (byte)0)]
@@ -47,7 +47,7 @@ namespace Portsea.Utils.Tests.Validation.Attributes
         public void Check_Equal_Values_Return_True(double pivotValue, object value)
         {
             // Assert
-            Assert.IsTrue(this.GetAttribute(pivotValue).IsValid(value));
+            Assert.That(this.GetAttribute(pivotValue).IsValid(value), Is.True);
         }
 
         [Test]
@@ -58,7 +58,7 @@ namespace Portsea.Utils.Tests.Validation.Attributes
             decimal value = 0.00M;
 
             // Assert
-            Assert.IsTrue(this.GetAttribute(pivotValue).IsValid(value));
+            Assert.That(this.GetAttribute(pivotValue).IsValid(value), Is.True);
         }
 
         [TestCase((double)1.00, (byte)0)]
@@ -73,7 +73,7 @@ namespace Portsea.Utils.Tests.Validation.Attributes
         [TestCase((double)1.00, (float)0.00)]
         public void Check_Lesser_Values_Return_True(double pivotValue, object value)
         {
-            Assert.IsTrue(this.GetAttribute(pivotValue).IsValid(value));
+            Assert.That(this.GetAttribute(pivotValue).IsValid(value), Is.True);
         }
 
         [Test]
@@ -84,7 +84,7 @@ namespace Portsea.Utils.Tests.Validation.Attributes
             decimal value = 0.00M;
 
             // Assert
-            Assert.IsTrue(this.GetAttribute(minimumValue).IsValid(value));
+            Assert.That(this.GetAttribute(minimumValue).IsValid(value), Is.True);
         }
 
         private ValidationAttribute GetAttribute(double pivotValue)
