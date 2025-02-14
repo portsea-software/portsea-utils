@@ -15,7 +15,7 @@ namespace Portsea.Utils.Net.Smtp
     {
         private static readonly Regex Base64EncodedImages = new Regex("(?:data:image)/(?<subMediaType>png|jpeg|gif)(?:;base64,)(?<base64>.*)");
 
-        private static readonly IImageDownloader ImageDownloader = new ImageDownloader();
+        private static readonly ImageDownloader ImageDownloader = new ImageDownloader();
 
         public static MimeMessage BuildMessage(BuildMessageRequest request)
         {
@@ -104,9 +104,8 @@ namespace Portsea.Utils.Net.Smtp
                 elementCounter++;
                 HtmlAgilityPack.HtmlAttribute srcAttribute = img.Attributes["src"];
 
-                if (imageParts.ContainsKey(srcAttribute.Value))
+                if (imageParts.TryGetValue(srcAttribute.Value, out MimeEntity linkedResource))
                 {
-                    MimeEntity linkedResource = imageParts[srcAttribute.Value];
                     srcAttribute.Value = string.Format("cid:{0}", linkedResource.ContentId);
                 }
             }
@@ -114,7 +113,7 @@ namespace Portsea.Utils.Net.Smtp
             return doc.DocumentNode.OuterHtml;
         }
 
-        private static IDictionary<string, MimeEntity> GetImageSources(HtmlAgilityPack.HtmlDocument doc)
+        private static Dictionary<string, MimeEntity> GetImageSources(HtmlAgilityPack.HtmlDocument doc)
         {
             Dictionary<string, MimeEntity> source2MimeParts = new Dictionary<string, MimeEntity>();
 

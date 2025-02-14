@@ -15,10 +15,13 @@ namespace Portsea.Utils.Tests.Validation.Attributes
         [TestCase(true, "  ", true)]
         public void Check_With_Allow_Empty_Strings_Parameter(bool allowEmptyStrings, string emailAddress, bool isValid)
         {
-            // Assert
-            EmailAddressAttribute attribute = new EmailAddressAttribute();
-            attribute.AllowEmptyStrings = allowEmptyStrings;
+            // Arrange
+            EmailAddressAttribute attribute = new()
+            {
+                AllowEmptyStrings = allowEmptyStrings
+            };
 
+            // Act / Assert
             Assert.That(attribute.IsValid(emailAddress), Is.EqualTo(isValid));
         }
     }

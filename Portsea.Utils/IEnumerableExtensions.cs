@@ -20,10 +20,7 @@ namespace Portsea.Utils
         {
             if (source != null)
             {
-                foreach (object obj in source)
-                {
-                    return false;
-                }
+                return !source.IsAny();
             }
 
             return true;

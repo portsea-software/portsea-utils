@@ -15,10 +15,10 @@ namespace Portsea.Utils.Tests.Net.Smtp
         public void Build_Valid_Html_Mime_Message()
         {
             // Arrange
-            BuildMessageRequest request = new BuildMessageRequest()
+            BuildMessageRequest request = new()
             {
                 Email = "from@example.com",
-                To = new string[] { "to@example.com" },
+                To = ["to@example.com"],
                 HtmlBody = "<html><body><h1>Hello!</h1></body></html>",
             };
 
@@ -36,10 +36,10 @@ namespace Portsea.Utils.Tests.Net.Smtp
         public void Build_Valid_Text_Mime_Message()
         {
             // Arrange
-            BuildMessageRequest request = new BuildMessageRequest()
+            BuildMessageRequest request = new()
             {
                 Email = "from@example.com",
-                To = new string[] { "to@example.com" },
+                To = ["to@example.com"],
                 TextBody = "Hello!",
             };
 
@@ -57,10 +57,10 @@ namespace Portsea.Utils.Tests.Net.Smtp
         public void Build_Valid_Mime_Message_With_Only_Cc_Recipients()
         {
             // Arrange
-            BuildMessageRequest request = new BuildMessageRequest()
+            BuildMessageRequest request = new()
             {
                 Email = "from@example.com",
-                Cc = new string[] { "to@example.com" },
+                Cc = ["to@example.com"],
                 TextBody = "Hello!",
             };
 
@@ -76,10 +76,10 @@ namespace Portsea.Utils.Tests.Net.Smtp
         public void Build_Valid_Mime_Message_With_Only_Bcc_Recipients()
         {
             // Arrange
-            BuildMessageRequest request = new BuildMessageRequest()
+            BuildMessageRequest request = new()
             {
                 Email = "from@example.com",
-                Bcc = new string[] { "to@example.com" },
+                Bcc = ["to@example.com"],
                 TextBody = "Hello!",
             };
 
@@ -97,12 +97,12 @@ namespace Portsea.Utils.Tests.Net.Smtp
             // Arrange
             string attachmentPath = System.IO.Path.GetTempFileName();
             System.IO.File.WriteAllText(attachmentPath, "Example attachment");
-            BuildMessageRequest request = new BuildMessageRequest()
+            BuildMessageRequest request = new()
             {
                 Email = "from@example.com",
-                To = new string[] { "to@example.com" },
+                To = ["to@example.com"],
                 HtmlBody = "<html><body><h1>Hello!</h1></body></html>",
-                Attachments = new string[] { attachmentPath }
+                Attachments = [attachmentPath]
             };
 
             // Act
@@ -116,11 +116,11 @@ namespace Portsea.Utils.Tests.Net.Smtp
         public void Build_Valid_Mime_Message_With_Explicit_ReplyTo_Address()
         {
             // Arrange
-            BuildMessageRequest request = new BuildMessageRequest()
+            BuildMessageRequest request = new()
             {
                 Email = "from@example.com",
-                To = new string[] { "to@example.com" },
-                ReplyTo = new string[] { "user1@example.com", "user2@example.com" },
+                To = ["to@example.com"],
+                ReplyTo = ["user1@example.com", "user2@example.com"],
                 HtmlBody = "<html><body><h1>Hello!</h1></body></html>"
             };
 
@@ -137,18 +137,18 @@ namespace Portsea.Utils.Tests.Net.Smtp
             // Arrange
             string logoPath = Path.Combine(TestContext.CurrentContext.TestDirectory, "logo.png");
 
-            BuildMessageRequest request = new BuildMessageRequest()
+            BuildMessageRequest request = new()
             {
                 Email = "from@example.com",
-                To = new string[] { "to@example.com" },
-                ReplyTo = new string[] { "user1@example.com", "user2@example.com" },
+                To = ["to@example.com"],
+                ReplyTo = ["user1@example.com", "user2@example.com"],
                 HtmlBody = $"<html><body><h1>Hello!</h1><p><img src=\"{logoPath}\"></body></html>"
             };
 
             // Act
             MimeMessage message = MimeMessageBuilder.BuildMessage(request);
 
-            HtmlDocument htmlDoc = new HtmlDocument();
+            HtmlDocument htmlDoc = new();
             htmlDoc.LoadHtml(message.HtmlBody);
             string imgSrc = htmlDoc.DocumentNode.SelectSingleNode("//img[1]").GetAttributeValue("src", string.Empty);
 
@@ -161,20 +161,20 @@ namespace Portsea.Utils.Tests.Net.Smtp
         {
             // Arrange
             string logoPath = Path.Combine(TestContext.CurrentContext.TestDirectory, "logo.png");
-            Uri logoUri = new Uri(logoPath);
+            Uri logoUri = new(logoPath);
 
-            BuildMessageRequest request = new BuildMessageRequest()
+            BuildMessageRequest request = new()
             {
                 Email = "from@example.com",
-                To = new string[] { "to@example.com" },
-                ReplyTo = new string[] { "user1@example.com", "user2@example.com" },
+                To = ["to@example.com"],
+                ReplyTo = ["user1@example.com", "user2@example.com"],
                 HtmlBody = $"<html><body><h1>Hello!</h1><p><img src=\"{logoUri.AbsoluteUri}\"></body></html>"
             };
 
             // Act
             MimeMessage message = MimeMessageBuilder.BuildMessage(request);
 
-            HtmlDocument htmlDoc = new HtmlDocument();
+            HtmlDocument htmlDoc = new();
             htmlDoc.LoadHtml(message.HtmlBody);
             string imgSrc = htmlDoc.DocumentNode.SelectSingleNode("//img[1]").GetAttributeValue("src", string.Empty);
 
@@ -188,18 +188,18 @@ namespace Portsea.Utils.Tests.Net.Smtp
             // Arrange
             string logoPath = Path.Combine(TestContext.CurrentContext.TestDirectory, "nonexistingfile.png");
             
-            BuildMessageRequest request = new BuildMessageRequest()
+            BuildMessageRequest request = new()
             {
                 Email = "from@example.com",
-                To = new string[] { "to@example.com" },
-                ReplyTo = new string[] { "user1@example.com", "user2@example.com" },
+                To = ["to@example.com"],
+                ReplyTo = ["user1@example.com", "user2@example.com"],
                 HtmlBody = $"<html><body><h1>Hello!</h1><p><img src=\"{logoPath}\"></body></html>"
             };
 
             // Act
             MimeMessage message = MimeMessageBuilder.BuildMessage(request);
 
-            HtmlDocument htmlDoc = new HtmlDocument();
+            HtmlDocument htmlDoc = new();
             htmlDoc.LoadHtml(message.HtmlBody);
             string imgSrc = htmlDoc.DocumentNode.SelectSingleNode("//img[1]").GetAttributeValue("src", string.Empty);
 
